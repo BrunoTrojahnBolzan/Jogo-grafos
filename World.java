@@ -29,11 +29,6 @@ public class World {
 			tiles = new Tile[WIDTH * HEIGHT];
 			
 			Grafo grafo = new Grafo();
-
-			System.out.println(WIDTH);
-			System.out.println(HEIGHT);
-
-			
 			
 			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
 			for (int xx=0; xx < WIDTH; xx++)
@@ -41,7 +36,7 @@ public class World {
 				for (int yy = 0; yy < HEIGHT; yy++)
 				{
 					int pixelAtual = pixels[xx + (yy * WIDTH)];
-										
+					
 					
 					if (pixelAtual == 0xFFFFFFFF)					// cor branca (PAREDE)
 					{
@@ -80,14 +75,16 @@ public class World {
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
 						grafo.setWeight(xx, yy, 999);
+						grafo.xFim = xx;
+						grafo.yFim = yy;
 					}
 
 					
 					
 				}
 			}
-		
-		grafo.printgrafo();
+		grafo.dijkstra(grafo.xInicio, grafo.yInicio, 0);
+		//grafo.printgrafo();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -121,9 +118,6 @@ public class World {
 				tile.render(g);
 			}
 		}
-		JFrame frame = new JFrame();
-		JOptionPane.showMessageDialog(frame, "asdksafas.");
 	}
 }
 	
-

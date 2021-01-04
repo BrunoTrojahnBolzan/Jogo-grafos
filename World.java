@@ -5,8 +5,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-import com.gLstudios.entities.*;
+import com.gLstudios.IA.Grafo;
 import com.gLstudios.main.Game;
 
 public class World {
@@ -14,6 +16,8 @@ public class World {
 	public static Tile[] tiles;
 	public static int WIDTH, HEIGHT;
 	public static final int TILE_SIZE = 16;
+	
+	
 	
 	public World(String path) {
 		try {
@@ -24,6 +28,11 @@ public class World {
 			HEIGHT = map.getHeight();
 			tiles = new Tile[WIDTH * HEIGHT];
 			
+			Grafo grafo = new Grafo();
+
+			System.out.println(WIDTH);
+			System.out.println(HEIGHT);
+
 			
 			
 			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
@@ -32,55 +41,57 @@ public class World {
 				for (int yy = 0; yy < HEIGHT; yy++)
 				{
 					int pixelAtual = pixels[xx + (yy * WIDTH)];
-					
-					tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta floor por padrão
+										
 					
 					if (pixelAtual == 0xFFFFFFFF)					// cor branca (PAREDE)
 					{
 						tiles[xx + (yy * WIDTH)] = new WallTile(xx * 16, yy * 16, Tile.TILE_WALL);
+						grafo.setWeight(xx, yy, -1); 				
 					}
 					
 					else if (pixelAtual == 0xFFDA5913)				// cor Laranja (LAVA)
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16,yy *16, Tile.TILE_LAVA);
+						grafo.setWeight(xx, yy, 5);
 					}
 					
 					else if (pixelAtual == 0xFFAF7A5B)				// cor marrom (LAMA)
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16,yy *16, Tile.TILE_MUD);
+						grafo.setWeight(xx, yy, 2);
 					}
 					
 					else if (pixelAtual == 0xFF3239FF)				// cor azul (PLAYER)
 					{
+						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
 						Game.player1.setX(xx*16);
 						Game.player1.setY(yy*16);
+						grafo.setWeight(xx, yy, 1);
+						grafo.xInicio = xx;
+						grafo.yInicio = yy;
 					}
-					else if (pixelAtual == 0xFFFF2339)				// cor vermelha (INIMIGO)
+					
+					else if (pixelAtual == 0xFF000000)				// cor preta (caminho)
 					{
-						
-						Game.entities.add(new Enemy(xx * 16,yy *16, 16, 16, Entity.ENEMY_EN));
+						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
+						grafo.setWeight(xx, yy, 1);
 					}
-					else if (pixelAtual == 0xFFFFFB32)				// cor amarela (MUNIÇÃO)
+					else if (pixelAtual == 0xFFFE6E0E)
 					{
-						Game.entities.add(new Ammo(xx * 16,yy *16, 16, 16, Entity.AMMO_EN));
-					}
-					else if (pixelAtual == 0xFFA2FF70)				// cor verde (VIDA)
-					{
-						Game.entities.add(new LifePack(xx * 16,yy *16, 16, 16, Entity.LIFEPACK_EN));
-					}
-					else if (pixelAtual == 0xFFFF6F0F)				// cor laranja (ARMA)
-					{
-						Game.entities.add(new Weapon(xx * 16,yy *16, 16, 16, Entity.WEAPON_EN));
+						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
+						grafo.setWeight(xx, yy, 999);
 					}
 
 					
 					
 				}
 			}
-			
+		
+		grafo.printgrafo();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 
@@ -110,6 +121,8 @@ public class World {
 				tile.render(g);
 			}
 		}
+		JFrame frame = new JFrame();
+		JOptionPane.showMessageDialog(frame, "asdksafas.");
 	}
 }
 	

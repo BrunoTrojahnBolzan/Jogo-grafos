@@ -7,10 +7,12 @@ import com.gLstudios.main.Game;
 
 public class Tile {
 	
+	public static BufferedImage TILE_WALL = Game.spritesheet.getSprite(16, 0, 16, 16);
 	public static BufferedImage TILE_FLOOR = Game.spritesheet.getSprite(0, 0, 16, 16);
 	public static BufferedImage TILE_MUD = Game.spritesheet.getSprite(0, 16, 16, 16);
 	public static BufferedImage TILE_LAVA = Game.spritesheet.getSprite(0, 16*2, 16, 16);
-	public static BufferedImage TILE_WALL = Game.spritesheet.getSprite(16, 0, 16, 16);
+	public static BufferedImage TILE_SNOW = Game.spritesheet.getSprite(0, 16*3, 16, 16);
+	
 	
 	private BufferedImage sprite;
 	private int x,y;

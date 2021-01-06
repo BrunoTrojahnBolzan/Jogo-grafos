@@ -29,26 +29,34 @@ public class IA extends Entity{
 
 	
 	
-	public void controlaRobo(LinkedList<Coord> caminho1) {
+	/*
+	 Objetivo: Fazer o robo seguir o menor caminho
+	 Entrada: Menor caminho
+	 Saída: sprite do robo movimentado pelas coordenadas
+	*/
+	public void controlaRobo(LinkedList<Coord> caminho) {		 
 
 		try {
-			TimeUnit.MILLISECONDS.sleep(500);
+			TimeUnit.MILLISECONDS.sleep(500);			// função que pausa execução por determinado tempo
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	
-		if (caminho1.size() > 0)
+		if (caminho.size() > 0)						// verifica se ainda restam coordenadas no caminho
 		{
-			Game.robo.setX(caminho1.getFirst().x * World.TILE_SIZE);
-			Game.robo.setY(caminho1.getFirst().y * World.TILE_SIZE);			
-			caminho1.removeFirst();
+			// define a posição do robo para a coordenada atual da lista
+			Game.robo.setX(caminho.getFirst().x * World.TILE_SIZE);		
+			Game.robo.setY(caminho.getFirst().y * World.TILE_SIZE);			
+			caminho.removeFirst();					// remove coordenada recém utilizada
 		}
-		else
+		else										// caso tenha chegado no fim
 		{
-			caminho1.clear();
-			JOptionPane.showMessageDialog(Game.frame, "Distância percorrida: " + World.grafo.menor);
-			System.exit(0);
-			Game.jogo.stop();
+			caminho.clear();						// limpa a Lista caminho
+			if(World.grafo.menor != 9999999)
+				JOptionPane.showMessageDialog(Game.frame, "Distância percorrida: " + World.grafo.menor);			// exibe mensagem
+			else
+				JOptionPane.showMessageDialog(Game.frame, "Impossível de alcançar o destino");			// exibe mensagem				
+			System.exit(0);							// encerra execução do programa
 		}
 	}
 	

@@ -30,8 +30,8 @@ public class World {
 			
 			grafo = new Grafo();			// Inicia o grafo
 			
-			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
-			for (int xx=0; xx < WIDTH; xx++)
+			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());		
+			for (int xx=0; xx < WIDTH; xx++)			//loop que passa por cada pixel do mapa
 			{
 				for (int yy = 0; yy < HEIGHT; yy++)
 				{
@@ -42,35 +42,36 @@ public class World {
 					if (pixelAtual == 0xFFFFFFFF)					// cor branca (PAREDE)
 					{
 						tiles[xx + (yy * WIDTH)] = new WallTile(xx * 16, yy * 16, Tile.TILE_WALL);
-						grafo.definePeso(xx, yy, -1); 				
+						grafo.definePeso(xx, yy, -1); 	// define o peso da parede como inválido						
 					}
 					
 					else if (pixelAtual == 0xFFDA5913)				// cor Laranja (LAVA)
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16,yy *16, Tile.TILE_LAVA);
-						grafo.definePeso(xx, yy, 5);
+						grafo.definePeso(xx, yy, -1);	// define o peso da lava como 5
 					}
 					
 					else if (pixelAtual == 0xFFAF7A5B)				// cor marrom (LAMA)
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16,yy *16, Tile.TILE_MUD);
-						grafo.definePeso(xx, yy, 2);
+						grafo.definePeso(xx, yy, 2);	// define o peso da LAMA como 2
 					}
 					
-					else if (pixelAtual == 0xFFD5E2E8)				// cor marrom (snow)
+					else if (pixelAtual == 0xFFD5E2E8)				// cor marrom (NEVE)
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16,yy *16, Tile.TILE_SNOW);
-						grafo.definePeso(xx, yy, 4);
+						grafo.definePeso(xx, yy, 3);	// define o peso da NEVE como 3
 					}
 					
 					else if (pixelAtual == 0xFF3239FF)				// cor azul (PLAYER)
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
-						Game.robo.setX(xx*16);
+						// posiciona o robo no início
+						Game.robo.setX(xx*16);			 
 						Game.robo.setY(yy*16);
 						
-						grafo.definePeso(xx, yy, 6);
-						grafo.xInicio = xx;
+						grafo.definePeso(xx, yy, 1);	// define peso do início do caminho
+						grafo.xInicio = xx;				// define coordenadas iniciais
 						grafo.yInicio = yy;
 					}
 					
@@ -83,8 +84,9 @@ public class World {
 					else if (pixelAtual == 0xFFFE6E0E)				// Final do caminho
 					{
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Entity.BANDEIRA_EN);	// seta caminho
-						grafo.definePeso(xx, yy, 0);
-						grafo.xFim = xx;
+						grafo.definePeso(xx, yy, 0);				// define peso do final do caminho
+						// guarda coordenadas do fim do caminho
+						grafo.xFim = xx;			
 						grafo.yFim = yy;
 					}
 
@@ -92,7 +94,7 @@ public class World {
 				}
 			}
 
-		grafo.procuraMenorCaminho(grafo.xInicio, grafo.yInicio, 0);
+		grafo.procuraMenorCaminho(grafo.xInicio, grafo.yInicio, 0);	// chamada da função que procura menor caminho 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

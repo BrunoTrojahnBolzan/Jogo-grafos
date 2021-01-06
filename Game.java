@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import com.gLstudios.IA.Grafo;
+import com.gLstudios.IA.IA;
 import com.gLstudios.entities.Entity;
 import com.gLstudios.entities.Player;
 import com.gLstudios.graphics.Spritesheet;
@@ -36,18 +36,18 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static Spritesheet spritesheet;
 	
 	public static World world;
+	public static Game jogo;
 	
+
 	public static Player player1;
-	
-	public Grafo grafo = new Grafo(10);
+	public static IA robo;
+
 	
 	public Game(){
 		addKeyListener(this);
 		setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT* SCALE));
 		initFrame();
 
-		grafo.addNodo(0, 0, 1);
-		grafo.teste2();
 		
 		//Inicializando objetos
 		image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
@@ -58,15 +58,18 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		player1 = new Player(0,0,16,16,spritesheet.getSprite(16*2,0, 16, 16));
 		entities.add(player1);
 		
+		//Inicializando Inteligencia artificial
+		robo = new IA(0,0,16,16,spritesheet.getSprite(16*4,16, 16, 16));
+		
 		// Inicializando Mundo
 		world = new World("/gameMap.png");
-
-
+		
 	}
 	
 	public static void main (String args[]) {
-		Game jogo = new Game();
+		jogo = new Game();
 		jogo.start();
+		
 	}
 	
 	public synchronized void start() {
@@ -87,11 +90,12 @@ public class Game extends Canvas implements Runnable, KeyListener{
 
 	public void tick() {
 		
-		for (int i = 0; i<entities.size(); i++)
-		{
-			Entity e = entities.get(i);
-			e.tick();
-		}
+//		for (int i = 0; i<entities.size(); i++)
+//		{
+//			Entity e = entities.get(i);
+//			e.tick();
+//		}
+		robo.tick();
 	}
 
 	public void render() {
@@ -106,9 +110,10 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		g.fillRect(0, 0, WIDTH, HEIGHT);			// fundo preto da tela
 		
 
-//				RENDERIZAÇÃO		
-		
+//				RENDERIZAÃ‡ÃƒO		
+
 		world.render(g);
+		robo.render(g);
 		
 		for (int i = 0; i<entities.size(); i++)
 		{
@@ -123,7 +128,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	}
 	
 	public void initFrame() {
-		frame = new JFrame("TESTE");
+		frame = new JFrame("Jogo Grafos");
 		frame.add(this);
 		frame.setResizable(false);
 		frame.pack();
@@ -137,7 +142,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		double amountOfTicks = 60.0;
 		double ns = 1000000000 / amountOfTicks;
 		double delta = 0;
-		int frames = 0;											// int to check the fps
+//		int frames = 0;											// int to check the fps
 		double timer = System.currentTimeMillis();			
 		
 		while(isRunning)
@@ -149,13 +154,13 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			{
 				tick();
 				render();
-				frames ++;
+//				frames ++;
 				delta --;
 			}
 			if (System.currentTimeMillis() - timer >= 1000)
 			{
-				System.out.println("FPS:" + frames);
-				frames = 0;
+//				System.out.println("FPS:" + frames);
+//				frames = 0;
 				timer +=1000;
 			}
 		}

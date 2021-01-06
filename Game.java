@@ -15,7 +15,6 @@ import javax.swing.JFrame;
 
 import com.gLstudios.IA.IA;
 import com.gLstudios.entities.Entity;
-import com.gLstudios.entities.Player;
 import com.gLstudios.graphics.Spritesheet;
 import com.gLstudios.world.World;
 
@@ -38,8 +37,15 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static World world;
 	public static Game jogo;
 	
-
-	public static Player player1;
+	private enum STATE{
+		Menu,
+		Jogo
+	};
+	
+	private STATE state = STATE.Menu;
+	private Menu menu;
+	
+	
 	public static IA robo;
 
 	
@@ -54,15 +60,14 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		entities = new ArrayList<Entity>();
 		spritesheet = new Spritesheet("/spritesheet.png");
 			
-		// Inicializando Jogador;
-		player1 = new Player(0,0,16,16,spritesheet.getSprite(16*2,0, 16, 16));
-		entities.add(player1);
 		
 		//Inicializando Inteligencia artificial
 		robo = new IA(0,0,16,16,spritesheet.getSprite(16*4,16, 16, 16));
 		
 		// Inicializando Mundo
 		world = new World("/gameMap.png");
+		
+		menu = new Menu();
 		
 	}
 	
@@ -89,13 +94,9 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	
 
 	public void tick() {
-		
-//		for (int i = 0; i<entities.size(); i++)
-//		{
-//			Entity e = entities.get(i);
-//			e.tick();
-//		}
-		robo.tick();
+	
+		if(state == STATE.Jogo)
+			robo.tick();
 	}
 
 	public void render() {
@@ -106,20 +107,25 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			return;
 		}
 		Graphics g = image.getGraphics();
-		g.setColor(Color.black);
+		g.setColor(new Color(4,252,90));
 		g.fillRect(0, 0, WIDTH, HEIGHT);			// fundo preto da tela
 		
 
 //				RENDERIZAÇÃO		
 
-		world.render(g);
-		robo.render(g);
-		
-		for (int i = 0; i<entities.size(); i++)
+		if(state == STATE.Jogo)
 		{
-			Entity e = entities.get(i);
-			e.render(g);;
-		}		
+			world.render(g);
+			robo.render(g);			
+	
+		}
+		else if(state == STATE.Menu)
+		{
+			menu.render(g);
+		}
+		
+		
+	
 		
 		g.dispose();
 		g = bs.getDrawGraphics();
@@ -153,8 +159,8 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			lastTime = now;
 			if (delta >= 1)
 			{
-				tick();
 				render();
+				tick();
 //				frames ++;
 				delta --;
 			}
@@ -171,29 +177,15 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
-				
-		if (e.getKeyChar() == 'd')							// direita pressionado
-		{
-			player1.moveRight();
-		}
-		else if (e.getKeyChar() == 'a')						// esquerda pressionado
-		{
-			player1.moveLeft();
-		}
-		else if (e.getKeyChar() == 'w')						// cima pressionado
-		{
-			player1.moveUp();
-		}
-		else if (e.getKeyChar() == 's')						// baixo pressionado
-		{
-			player1.moveDown();
-		}
 	}
 	
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-	
+		if (e.getKeyCode() == KeyEvent.VK_ENTER)							// direita pressionado
+		{
+			state = STATE.Jogo;
+		}
 	}
 
 	@Override

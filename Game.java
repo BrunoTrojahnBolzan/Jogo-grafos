@@ -135,6 +135,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+	
 	}
 	
 	public void run() {

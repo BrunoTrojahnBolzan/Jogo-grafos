@@ -9,10 +9,9 @@ import com.gLstudios.world.Camera;
 public class Entity {
 
 	public static BufferedImage LIFEPACK_EN = Game.spritesheet.getSprite(16*5, 0, 16, 16);
-	public static BufferedImage WEAPON_EN = Game.spritesheet.getSprite(16*6, 0, 16, 16);
+	public static BufferedImage BANDEIRA_EN = Game.spritesheet.getSprite(16*6, 0, 16, 16);
 	public static BufferedImage AMMO_EN = Game.spritesheet.getSprite(16*7, 0, 16, 16);
 	public static BufferedImage ENEMY_EN = Game.spritesheet.getSprite(16*8, 0, 16, 16);
-	
 	
 	protected double x, y;
 	protected int width, height;
@@ -27,7 +26,7 @@ public class Entity {
 		this.sprite = sprite;
 	}
 
-	// métodos setters
+	// mÃ©todos setters
 	public void setX(int newX) {
 		this.x = newX;
 	}
@@ -35,7 +34,7 @@ public class Entity {
 		this.y = newY;
 	}
 	
-	// métodos getters
+	// mÃ©todos getters
 	public int getX() {
 		return (int)this.x;
 	}

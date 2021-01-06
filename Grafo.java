@@ -1,40 +1,45 @@
 package com.gLstudios.IA;
 
-import java.awt.Component;
+// importando classes de Lista encadeada do Java
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import com.gLstudios.main.Game;
 import com.gLstudios.world.World;
 
-public class Grafo {
+public class Grafo {					
 
-	Nodo g[][] = new Nodo[World.WIDTH][World.HEIGHT];
+	Nodo g[][] = new Nodo[World.WIDTH][World.HEIGHT];		// Matriz que representa o grafo	
 
-	public int xInicio, yInicio;
-	public int xFim, yFim;
-	int menor = 99999999;
+	public int xInicio, yInicio;							// Coordenadas de início 
+	public int xFim, yFim;									// Coordenadas de fim 
+	public int menor = 9999999;								// Menor distância percorrida
 	
-	public LinkedList<Coord> caminho1 = new LinkedList<Coord>();
-	LinkedList<Coord> caminho2 = new LinkedList<Coord>();
+	public LinkedList<Coord> caminhoMenor = new LinkedList<Coord>();		// Lista encadeada que salva caminho menor
+	LinkedList<Coord> caminhoAux = new LinkedList<Coord>();				// Lista encadeada que salva caminho atual
 	
-	class Nodo {
-		int visit, peso;
-		
-		public Nodo(int peso){
+	
+	
+	public Grafo() {				// Função construtora do Grafo
+		for(int i = 0; i < World.WIDTH; i++) {
+			for (int j=0; j<World.HEIGHT; j++) {
+				g[i][j] = new Nodo(0);			// aloca espaço para cada nodo
+			}
+
+		}
+	}
+	
+	class Nodo {					// classe que determina estrutura do Nodo
+		int peso;				
+		boolean visit;			
+		public Nodo(int peso){	// função construtora do Nodo
 		 	this.peso = peso;
-		 	this.visit = 0;
+		 	this.visit = false;
 		}
 	} 
 	
-	class Coord {
+	class Coord {					// classe que representa coordenada
 		
 		int x, y;
 		
-		Coord(int x, int y){
+		Coord(int x, int y){	// Função construtora da Coord
 			
 			this.x = x;
 			this.y = y;
@@ -43,103 +48,63 @@ public class Grafo {
 		
 	}
 	
-	public void setWeight(int x, int y, int w) {
+	public void definePeso(int x, int y, int w) {			// função que atribui pesos
 		g[x][y].peso = w;
-		g[x][y].visit = 0;
 	}
 	
-	public void dijkstra(int x, int y, int distancia) {
+	
+	/*
+	 Objetivo: Encontrar menor caminho em um grafo recursivamente
+	 Entrada: Grafo, coordenadas do ínicio, distância  
+	 Saída: Menor caminho possível
+	 */	
+	public void procuraMenorCaminho(int x, int y, int distancia) {	
 		
-		caminho2.add(new Coord(x, y));
-
-		if(!(x == xFim && y == yFim)) {
+		caminhoAux.add(new Coord(x, y));			// adiciona posição atual a Lista de coordenadas auxiliar
+		
+		if(!(x == xFim && y == yFim)) {			// verifica se está no fim do caminho
 			
-			g[x][y].visit = 1;
-						
-			System.out.println("Visitado: " + x + "," + y);
+			g[x][y].visit = true;				// marca posição como visitada
 			
-			if(g[x][y - 1].peso != -1 && g[x][y - 1].visit == 0) {
-				dijkstra(x, y - 1, distancia + g[x][y - 1].peso);
+			if(g[x][y - 1].peso != -1 && g[x][y - 1].visit == false) {		// se há caminho acima
+				procuraMenorCaminho(x, y - 1, distancia + g[x][y - 1].peso);		// chama recursivamente a função
 			}
-			if(g[x + 1][y].peso != -1 && g[x + 1][y].visit == 0) {
-				dijkstra(x + 1, y, distancia + g[x + 1][y].peso);
+			if(g[x + 1][y].peso != -1 && g[x + 1][y].visit == false) {		// se há caminho à direita
+				procuraMenorCaminho(x + 1, y, distancia + g[x + 1][y].peso);		// chama recursivamente a função
 			}
-			if(g[x][y + 1].peso != -1 && g[x][y + 1].visit == 0) {
-				dijkstra(x, y + 1, distancia + g[x][y + 1].peso);
+			if(g[x][y + 1].peso != -1 && g[x][y + 1].visit == false) {		// se há caminho abaixo
+				procuraMenorCaminho(x, y + 1, distancia + g[x][y + 1].peso);		// chama recursivamente a função
 			}
 		
-		}else {
-			System.out.println("Distancia: " + distancia);
-			System.out.println(x + "  " + y);
+		}else {							// se está no fim
 
-			
-			if(distancia < menor) {
-				menor = distancia;
-				caminho1 = (LinkedList<Coord>) caminho2.clone();
-//				for(int i=0;i<caminho2.size();i++)
-//					System.out.println(caminho2.get(i).x + "|" + caminho2.get(i).y);
-			}
+			if(distancia < menor) {					// se o caminho encontrado é mais curto
+				menor = distancia;					// sua distância é salva como menor
+				caminhoMenor = (LinkedList<Coord>) caminhoAux.clone();	// ele é salvo como menor caminho
+		}
 			
 		}
 		
-		// correções para desempilhar
-		if(caminho2.size() > 1)
-			caminho2.removeLast() ;
+		// Limpa o caminho auxiliar ao desempilhar
+		if(caminhoAux.size() > 0)
+			caminhoAux.removeLast() ;
 		else
-		{
-			caminho2.clear();
+			caminhoAux.clear();
+		
 			
-		}
-			
-		g[x][y].visit = 0;
+		g[x][y].visit = false;			// redefine as posições como não visitadas ao desempilhar
 		
 	}
-	
-	
-	public Grafo() {
-		for(int i = 0; i < World.WIDTH; i++) {
-			for (int j=0; j<World.HEIGHT; j++) {
-				g[i][j] = new Nodo(0);
-			}
 
-		}
-	}
 	
-	public void controlaRobo(LinkedList<Coord> caminho) {
-		try {
-			TimeUnit.MILLISECONDS.sleep(300);;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-//		System.out.println(caminho1.get(0));
-//		
-	
-		if (caminho1.size() > 0)
-		{
-			System.out.println("X: " + this.caminho1.getFirst().x + "Y: "+ this.caminho1.getFirst().y);
-			Game.robo.setX(this.caminho1.getFirst().x * World.TILE_SIZE);
-			Game.robo.setY(this.caminho1.getFirst().y * World.TILE_SIZE);			
-			caminho1.removeFirst() ;
 
-		}
-		else
-		{
-			caminho1.clear();
-			JOptionPane.showMessageDialog(Game.frame, "Distância percorrida: " + menor);
-			System.exit(0);
-
-			Game.jogo.stop();
-		}
-	}
 	
-	public void printgrafo() {
-		
+	public void printgrafo() {				// função de teste que imprime grafo 		
 		for (int i=0; i<World.WIDTH; i++)
 		{
 			for (int j=0; j<World.HEIGHT; j++)
 				System.out.print(g[i][j]+" ");
 			System.out.println();
-		}
-			
+		}		
 	}
 }

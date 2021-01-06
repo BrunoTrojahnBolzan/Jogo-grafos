@@ -5,10 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import com.gLstudios.IA.Grafo;
+import com.gLstudios.entities.Entity;
 import com.gLstudios.main.Game;
 
 public class World {
@@ -16,7 +15,8 @@ public class World {
 	public static Tile[] tiles;
 	public static int WIDTH, HEIGHT;
 	public static final int TILE_SIZE = 16;
-	
+	public static Grafo grafo;
+
 	
 	
 	public World(String path) {
@@ -27,8 +27,7 @@ public class World {
 			WIDTH = map.getWidth();
 			HEIGHT = map.getHeight();
 			tiles = new Tile[WIDTH * HEIGHT];
-			
-			Grafo grafo = new Grafo();
+			grafo = new Grafo();
 			
 			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
 			for (int xx=0; xx < WIDTH; xx++)
@@ -61,6 +60,9 @@ public class World {
 						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
 						Game.player1.setX(xx*16);
 						Game.player1.setY(yy*16);
+						Game.robo.setX(xx*16);
+						Game.robo.setY(yy*16);
+						
 						grafo.setWeight(xx, yy, 1);
 						grafo.xInicio = xx;
 						grafo.yInicio = yy;
@@ -73,17 +75,17 @@ public class World {
 					}
 					else if (pixelAtual == 0xFFFE6E0E)
 					{
-						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Tile.TILE_FLOOR);	// seta caminho
-						grafo.setWeight(xx, yy, 999);
+						tiles[xx + (yy * WIDTH)] = new FloorTile(xx * 16, yy * 16, Entity.WEAPON_EN);	// seta caminho
+						grafo.setWeight(xx, yy, 0);
 						grafo.xFim = xx;
 						grafo.yFim = yy;
 					}
 
 					
-					
 				}
 			}
 		grafo.dijkstra(grafo.xInicio, grafo.yInicio, 0);
+//		grafo.controlaRobo(grafo.caminho1);
 		//grafo.printgrafo();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,4 +122,3 @@ public class World {
 		}
 	}
 }
-	
